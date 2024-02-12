@@ -30,7 +30,6 @@ nbproject
 .project
 .settings
 .vs
-.vscode
 composer.lock
 *.swp
 *.swo
@@ -70,6 +69,8 @@ amplify/backend/function/submissionsLambda/src/*.js
 amplify/backend/function/submissionsLambda/src/controllers
 public/**/**/nextImageExportOptimizer/
 public/next-image-export-optimizer-hashes.json
+src/directory/directory.json
+src/directory/flatDirectory.json
 
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend

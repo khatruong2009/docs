@@ -31,35 +31,31 @@ describe('Feedback', () => {
     expect(thumbsDown).toBeInTheDocument();
   });
 
-  it('should hide buttons after user clicks No button', async () => {
+  it('should show response text when No is clicked', async () => {
     const component = <Feedback />;
 
     render(component);
 
-    const thumbsUp = screen.getByText('Yes');
-    const thumbsDown = screen.getByText('No');
+    const thumbsDownButton = screen.getByText('No');
+    const feedbackComponent = screen.getByText('Was this page helpful?');
+    const feedbackText = screen.getByText('Can you provide more details?');
 
-    expect(thumbsUp).toBeInTheDocument();
-    expect(thumbsDown).toBeInTheDocument();
+    expect(thumbsDownButton).toBeInTheDocument();
 
-    userEvent.click(thumbsDown);
+    userEvent.click(feedbackComponent);
 
     await waitFor(() => {
-      expect(thumbsUp).not.toBeVisible();
-      expect(thumbsDown).not.toBeVisible();
+      expect(feedbackText).toBeVisible();
     });
   });
 
   it('should call trackFeedbackSubmission request when either button is clicked', async () => {
     jest.spyOn(trackModule, 'trackFeedbackSubmission');
-
     const component = <Feedback />;
 
     render(component);
-
-    const thumbsDown = screen.getByText('No');
-
-    userEvent.click(thumbsDown);
+    const thumbsDownButton = screen.getByText('No');
+    userEvent.click(thumbsDownButton);
 
     await waitFor(() => {
       expect(trackModule.trackFeedbackSubmission).toHaveBeenCalled();

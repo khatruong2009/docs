@@ -13,7 +13,8 @@ const ANALYTICS_CSP = {
       'https://amazonwebservices.d2.sc.omtrdc.net',
       'https://aws.demdex.net',
       'https://dpm.demdex.net',
-      'https://cm.everesttech.net'
+      'https://cm.everesttech.net',
+      '*.shortbread.aws.dev'
     ],
     img: [
       'https://amazonwebservices.d2.sc.omtrdc.net',
@@ -21,7 +22,9 @@ const ANALYTICS_CSP = {
       'https://dpm.demdex.net',
       'https://cm.everesttech.net'
     ],
-    frame: ['https://aws.demdex.net', 'https://dpm.demdex.net']
+    frame: ['https://aws.demdex.net', 'https://dpm.demdex.net'],
+    script: ['*.shortbread.aws.dev'],
+    style: ['*.shortbread.aws.dev']
   },
   prod: {
     connect: [
@@ -38,7 +41,8 @@ const ANALYTICS_CSP = {
       'https://aa0.awsstatic.com/',
       'https://alpha.d2c.marketing.aws.dev/',
       'https://aws-mktg-csds-alpha.integ.amazon.com/',
-      'https://d2c-alpha.dse.marketing.aws.a2z.com'
+      'https://d2c-alpha.dse.marketing.aws.a2z.com',
+      'https://vs-alpha.aws.amazon.com'
     ],
     img: ['https://aa0.awsstatic.com/', 'https://alpha.d2c.marketing.aws.dev/'],
     script: [
@@ -56,77 +60,64 @@ const getCspContent = (context) => {
 
   // Dev environment
   if (process.env.BUILD_ENV !== 'production') {
-    return `upgrade-insecure-requests;
+    return `
       default-src 'none';
-      prefetch-src 'self';
-      style-src 'self' 'unsafe-inline';
+      style-src 'self' 'unsafe-inline' ${ANALYTICS_CSP.all.style.join(' ')};
       font-src 'self' data:;
       frame-src 'self' https://www.youtube-nocookie.com ${ANALYTICS_CSP.all.frame.join(
         ' '
       )};
-      connect-src 'self' *.shortbread.aws.dev ${ANALYTICS_CSP.all.connect.join(
+      connect-src 'self' ${ANALYTICS_CSP.all.connect.join(
         ' '
       )} ${ANALYTICS_CSP.alpha.connect.join(
-      ' '
-    )} https://*.algolia.net https://*.algolianet.com *.amazonaws.com;
+        ' '
+      )} https://*.algolia.net https://*.algolianet.com *.amazonaws.com;
       img-src 'self' https://img.shields.io data: ${ANALYTICS_CSP.all.img.join(
         ' '
       )} ${ANALYTICS_CSP.alpha.img.join(' ')}; 
       media-src 'self';
       script-src 'unsafe-eval' 'self' ${cspInlineScriptHash} ${ANALYTICS_CSP.alpha.script.join(
-      ' '
-    )};
-    `;
+        ' '
+      )} ${ANALYTICS_CSP.all.script.join(' ')};`;
   }
 
   // Prod environment
   // Have to keep track of CSP inside customHttp.yml as well
-  return `upgrade-insecure-requests;
+  return `
     default-src 'none';
-    prefetch-src 'self';
-    style-src 'self' 'unsafe-inline';
+    style-src 'self' 'unsafe-inline' ${ANALYTICS_CSP.all.style.join(' ')};
     font-src 'self';
     frame-src 'self' https://www.youtube-nocookie.com ${ANALYTICS_CSP.all.frame.join(
       ' '
     )};
-    connect-src 'self' *.shortbread.aws.dev ${ANALYTICS_CSP.all.connect.join(
+    connect-src 'self' ${ANALYTICS_CSP.all.connect.join(
       ' '
     )} ${ANALYTICS_CSP.prod.connect.join(
-    ' '
-  )} https://*.algolia.net https://*.algolianet.com *.amazonaws.com;
+      ' '
+    )} https://*.algolia.net https://*.algolianet.com *.amazonaws.com;
     img-src 'self' https://img.shields.io ${ANALYTICS_CSP.all.img.join(
       ' '
     )} ${ANALYTICS_CSP.prod.img.join(' ')};
     media-src 'self';
     script-src 'self' ${cspInlineScriptHash} ${ANALYTICS_CSP.prod.script.join(
-    ' '
-  )} ;
+      ' '
+    )} ${ANALYTICS_CSP.all.script.join(' ')};
   `;
 };
 
 export default class MyDocument extends Document {
   render() {
     return (
-      <Html>
+      <Html lang="en">
         <Head>
           <meta
             httpEquiv="Content-Security-Policy"
             content={getCspContent(this.props)}
           />
-          <link
-            rel="preload"
-            href="/fonts/AmazonEmber_W_Rg.woff2"
-            as="font"
-            type="font/woff2"
-            crossOrigin="anonymous"
-          />
-          <link
-            rel="preload"
-            href="/fonts/AmazonEmber_W_Lt.woff2"
-            as="font"
-            type="font/woff2"
-            crossOrigin="anonymous"
-          />
+          <script
+            src="https://prod.assets.shortbread.aws.dev/shortbread.js"
+            defer
+          ></script>
         </Head>
         <body>
           <Main />
